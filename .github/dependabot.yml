@@ -9,10 +9,13 @@ updates:
     directory: "/"
     schedule:
       interval: daily
+  - package-ecosystem: "docker"
+    directory: "/config/default"
+    schedule:
+      interval: daily
   - package-ecosystem: "gomod"
     directory: "/"
     open-pull-requests-limit: 10
     schedule:
       interval: "weekly"
-      # Check for updates on Saturdays
       day: "saturday"
