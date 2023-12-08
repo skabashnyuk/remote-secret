@@ -446,7 +446,7 @@ func TestServiceAccountSync(t *testing.T) {
 			}
 		}
 		objectMarker.MarkManagedImpl = func(ctx context.Context, k client.ObjectKey, o client.Object) (bool, error) {
-			objectMarker.MarkReferenced(ctx, k, o)
+			objectMarker.MarkReferenced(ctx, k, o) //nolint:errcheck //this is a test
 			if o.GetLabels() == nil {
 				o.SetLabels(map[string]string{})
 			}

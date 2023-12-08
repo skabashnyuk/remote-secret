@@ -172,7 +172,7 @@ func refreshTestData(t *testing.T) {
 		"accessToken":  "testAccessToken-" + random,
 		"tokenType":    "testTokenType-" + random,
 		"refreshToken": "testRefreshToken-" + random,
-		"expiry":       rand.Uint64() % 1000,
+		"expiry":       rand.Uint64() % 1000, //nolint:gosec // this is a test
 	}
 	bytes, err := secretstorage.SerializeJSON(&testData)
 	assert.NoError(t, err)

@@ -37,7 +37,7 @@ func TestAuthenticatingRoundTripper_RoundTrip(t *testing.T) {
 		return nil, nil
 	})}
 
-	_, _ = tr.RoundTrip(req)
+	_, _ = tr.RoundTrip(req) //nolint:bodyclose // the error is not relevant for this test
 
 	assert.True(t, roundtripProcessed)
 }

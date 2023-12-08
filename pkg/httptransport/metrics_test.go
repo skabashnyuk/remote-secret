@@ -80,7 +80,7 @@ func TestMetricsCollectingRoundTripper(t *testing.T) {
 
 	req = req.WithContext(ctx)
 
-	_, _ = tr.RoundTrip(req)
+	_, _ = tr.RoundTrip(req) //nolint:bodyclose // this is a test
 
 	var counterPresent bool
 	var gaugePresent bool

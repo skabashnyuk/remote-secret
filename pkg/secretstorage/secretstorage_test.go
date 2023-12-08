@@ -27,7 +27,7 @@ import (
 
 func TestDefaultTypedSecretStorage_Store(t *testing.T) {
 	record := testStorageCall(func(dtss *DefaultTypedSecretStorage[bool, bool]) {
-		dtss.Store(context.TODO(), pointer.Bool(true), nil)
+		dtss.Store(context.TODO(), pointer.Bool(true), nil) //nolint:errcheck //this is a test
 	}, CallsRecord[bool]{})
 
 	assert.True(t, record.ToIDCalled)
@@ -43,7 +43,7 @@ func TestDefaultTypedSecretStorage_Store(t *testing.T) {
 func TestFailedToId_Store(t *testing.T) {
 	record := testStorageCall(func(dtss *DefaultTypedSecretStorage[int, bool]) {
 		dtss.Store(context.TODO(), pointer.Int(42), nil)
-	}, CallsRecord[int]{ToIDFunc: func(i *int) (*SecretID, error) { return nil, fmt.Errorf("err") }})
+	}, CallsRecord[int]{ToIDFunc: func(i *int) (*SecretID, error) { return nil, fmt.Errorf("err") }}) //nolint:errcheck //this is a test
 
 	assert.True(t, record.ToIDCalled)
 
@@ -73,7 +73,9 @@ func TestDefaultTypedSecretStorage_Get(t *testing.T) {
 func TestFailedToId_Get(t *testing.T) {
 	record := testStorageCall(func(dtss *DefaultTypedSecretStorage[int, bool]) {
 		dtss.Get(context.TODO(), pointer.Int(42))
-	}, CallsRecord[int]{ToIDFunc: func(i *int) (*SecretID, error) { return nil, fmt.Errorf("err") }})
+	}, CallsRecord[int]{ToIDFunc: func(i *int) (*SecretID, error) {
+		return nil, fmt.Errorf("err") //nolint:errcheck //this is a test
+	}})
 
 	assert.True(t, record.ToIDCalled)
 
@@ -87,7 +89,7 @@ func TestFailedToId_Get(t *testing.T) {
 
 func TestDefaultTypedSecretStorage_Delete(t *testing.T) {
 	record := testStorageCall(func(dtss *DefaultTypedSecretStorage[int, bool]) {
-		dtss.Delete(context.TODO(), pointer.Int(42))
+		dtss.Delete(context.TODO(), pointer.Int(42)) //nolint:errcheck //this is a test
 	}, CallsRecord[int]{})
 
 	assert.True(t, record.ToIDCalled)
@@ -103,7 +105,9 @@ func TestDefaultTypedSecretStorage_Delete(t *testing.T) {
 func TestFailedToId_Delete(t *testing.T) {
 	record := testStorageCall(func(dtss *DefaultTypedSecretStorage[int, bool]) {
 		dtss.Delete(context.TODO(), pointer.Int(42))
-	}, CallsRecord[int]{ToIDFunc: func(i *int) (*SecretID, error) { return nil, fmt.Errorf("err") }})
+	}, CallsRecord[int]{ToIDFunc: func(i *int) (*SecretID, error) {
+		return nil, fmt.Errorf("err") //nolint:errcheck //this is a test
+	}})
 
 	assert.True(t, record.ToIDCalled)
 
@@ -117,7 +121,7 @@ func TestFailedToId_Delete(t *testing.T) {
 
 func TestDefaultTypedSecretStorage_Initialize(t *testing.T) {
 	record := testStorageCall(func(dtss *DefaultTypedSecretStorage[int, bool]) {
-		dtss.Initialize(context.TODO())
+		dtss.Initialize(context.TODO()) //nolint:errcheck //this is a test
 	}, CallsRecord[int]{})
 
 	// this is explicitly a noop, so test that it doesn't meddle

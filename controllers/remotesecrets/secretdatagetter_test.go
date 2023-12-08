@@ -59,7 +59,7 @@ func TestSecretDataGetter_GetData(t *testing.T) {
 		ss, st := new()
 
 		ss.GetImpl = func(ctx context.Context, key secretstorage.SecretID) ([]byte, error) {
-			return nil, errors.New("teh error")
+			return nil, errors.New("teh error") //nolint: goerr113 // this is a test
 		}
 
 		sdg := SecretDataGetter{

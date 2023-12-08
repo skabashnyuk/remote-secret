@@ -41,7 +41,7 @@ func TestExaminingRoundTripper_RoundTrip(t *testing.T) {
 		return nil
 	})}
 
-	_, _ = tr.RoundTrip(req)
+	_, _ = tr.RoundTrip(req) //nolint:bodyclose // this is a test
 
 	assert.True(t, examinerCalled)
 }
