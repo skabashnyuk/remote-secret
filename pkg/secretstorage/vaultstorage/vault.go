@@ -95,8 +95,8 @@ type VaultStorageConfig struct {
 	Role                        string
 	ServiceAccountTokenFilePath string
 
-	RoleIdFilePath   string
-	SecretIdFilePath string
+	RoleId   string
+	SecretId string
 
 	MetricsRegisterer prometheus.Registerer
 

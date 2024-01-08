@@ -16,6 +16,7 @@ package vaultcli
 
 import (
 	"context"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"strings"
 
 	"github.com/redhat-appstudio/remote-secret/pkg/secretstorage"
@@ -29,29 +30,41 @@ type VaultCliArgs struct {
 	VaultAuthMethod                vaultstorage.VaultAuthMethod `arg:"--vault-auth-method, env" default:"approle" help:"Authentication method to Vault token storage. Options: 'kubernetes', 'approle'."`
 	VaultApproleRoleIdFilePath     string                       `arg:"--vault-roleid-filepath, env" default:"/etc/spi/role_id" help:"Used with Vault approle authentication. Filepath with role_id."`
 	VaultApproleSecretIdFilePath   string                       `arg:"--vault-secretid-filepath, env" default:"/etc/spi/secret_id" help:"Used with Vault approle authentication. Filepath with secret_id."`
+	VaultAppRoleSecretName         string                       `arg:"--vault-aprrole-secret-name, env" default:"vault-approle-remote-secret-operator" help:"Secret name in k8s namespace with approle credentials. Used with Vault approle authentication. Secret should contain 'role_id' and 'secret_id' keys."`
 	VaultKubernetesSATokenFilePath string                       `arg:"--vault-k8s-sa-token-filepath, env" help:"Used with Vault kubernetes authentication. Filepath to kubernetes ServiceAccount token. When empty, Vault configuration uses default k8s path. No need to set when running in k8s deployment, useful mostly for local development."`
 	VaultKubernetesRole            string                       `arg:"--vault-k8s-role, env"  help:"Used with Vault kubernetes authentication. Vault authentication role set for k8s ServiceAccount."`
 	VaultDataPathPrefix            string                       `arg:"--vault-data-path-prefix, env" default:"spi" help:"Path prefix in Vault token storage under which all SPI data will be stored. No leading or trailing '/' should be used, it will be trimmed."`
 }
 
-// VaultStorageConfigFromCliArgs returns an instance of the VaultStorageConfig with some fields initialized from
-// the corresponding CLI arguments. Notably, the VaultStorageConfig.MetricsRegisterer is NOT configured, because this
-// cannot be done using just the CLI arguments.
-func VaultStorageConfigFromCliArgs(args *VaultCliArgs) *vaultstorage.VaultStorageConfig {
-	return &vaultstorage.VaultStorageConfig{
+//// VaultStorageConfigFromCliArgs returns an instance of the VaultStorageConfig with some fields initialized from
+//// the corresponding CLI arguments. Notably, the VaultStorageConfig.MetricsRegisterer is NOT configured, because this
+//// cannot be done using just the CLI arguments.
+//func VaultStorageConfigFromCliArgs(args *VaultCliArgs) *vaultstorage.VaultStorageConfig {
+//	return &vaultstorage.VaultStorageConfig{
+//		Host:                        args.VaultHost,
+//		AuthType:                    args.VaultAuthMethod,
+//		Insecure:                    args.VaultInsecureTLS,
+//		Role:                        args.VaultKubernetesRole,
+//		ServiceAccountTokenFilePath: args.VaultKubernetesSATokenFilePath,
+//		DataPathPrefix:              strings.Trim(args.VaultDataPathPrefix, "/"),
+//	}
+//}
+
+func CreateVaultStorage(ctx context.Context, client client.Client, args *VaultCliArgs) (secretstorage.SecretStorage, error) {
+	vaultConfig := &vaultstorage.VaultStorageConfig{
 		Host:                        args.VaultHost,
 		AuthType:                    args.VaultAuthMethod,
 		Insecure:                    args.VaultInsecureTLS,
 		Role:                        args.VaultKubernetesRole,
 		ServiceAccountTokenFilePath: args.VaultKubernetesSATokenFilePath,
-		RoleIdFilePath:              args.VaultApproleRoleIdFilePath,
-		SecretIdFilePath:            args.VaultApproleSecretIdFilePath,
 		DataPathPrefix:              strings.Trim(args.VaultDataPathPrefix, "/"),
 	}
-}
+	if args.VaultAuthMethod == vaultstorage.VaultAuthMethodApprole {
+		//TODO take client find secret args.VaultAppRoleSecretName and get role_id and secret_id
+		vaultConfig.SecretId = "SID"
+		vaultConfig.RoleId = "RID"
+	}
 
-func CreateVaultStorage(ctx context.Context, args *VaultCliArgs) (secretstorage.SecretStorage, error) {
-	vaultConfig := VaultStorageConfigFromCliArgs(args)
 	// use the same metrics registry as the controller-runtime
 	vaultConfig.MetricsRegisterer = metrics.Registry
 

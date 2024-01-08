@@ -44,7 +44,7 @@ func CreateInitializedSecretStorage(ctx context.Context, client client.Client, a
 
 	switch args.TokenStorage {
 	case VaultTokenStorage:
-		storage, err = vaultcli.CreateVaultStorage(ctx, &args.VaultCliArgs)
+		storage, err = vaultcli.CreateVaultStorage(ctx, client, &args.VaultCliArgs)
 	case AWSTokenStorage:
 		storage, err = awscli.NewAwsSecretStorage(ctx, args.InstanceId, &args.AWSCliArgs)
 	case ESSecretStorage:
